@@ -21,7 +21,7 @@ schema_view = get_swagger_view(title='TMT-Server平台 API文档')
 
 urlpatterns = [
     path('api/tmt/', include('tmtapp.urls')),
-    path('api/user/', include('loginapp.urls')),
+    path('api/user/', include('userapp.urls')),
     path('api/ios/', include('iosapp.urls')),
     path('api/doc/', schema_view),
 

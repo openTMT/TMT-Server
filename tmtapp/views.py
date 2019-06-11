@@ -97,6 +97,8 @@ class BugObject(views.APIView):
                                                         data['device_info'].get('storage'),
                                                         )
             del data['device_info']
+
+        data['steps'] = data['steps'].replace(f"{settings.ZENTAO_HOST}/", '')
         return data, files
 
     def get(self, request):

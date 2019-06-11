@@ -1,5 +1,5 @@
 from rest_framework import permissions
-import loginapp, tmtapp
+import userapp, tmtapp
 
 
 class CustomerPermission(permissions.BasePermission):
@@ -23,7 +23,7 @@ class CustomerPermission(permissions.BasePermission):
         if request.method in ("HEAD", "OPTIONS"):
             return True
 
-        if isinstance(view, loginapp.views.UserAuth):
+        if isinstance(view, userapp.views.UserAuth):
             return True
 
         if isinstance(view, tmtapp.views_file.FileUploadObject):

@@ -2,6 +2,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.conf import settings
 from tmtapp.zentao import Zentao
+from .models import Users
+from .serializers import UsersSerializer
 
 
 class UserAuth(APIView):
@@ -24,9 +26,14 @@ class UserAuth(APIView):
 
         zid, user_info = Zentao.login(username, password)
         if user_info:
-            request.session['user'] = user_info
+            info, created = Users.objects.get_or_create(username=username)
+            info.realname = user_info.get('realname')
+            info.email = user_info.get('email')
+            info.save()
+            serializer = UsersSerializer(info)
+            request.session['user'] = serializer.data
             request.session['zid'] = zid
-            return Response({"status": True, "message": "成功", "data": user_info})
+            return Response({"status": True, "message": "成功", "data": serializer.data})
         else:
             return Response({"status": False, "message": "失败", "data": {}})
 
