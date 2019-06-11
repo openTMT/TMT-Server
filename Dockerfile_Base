@@ -2,7 +2,7 @@ FROM python:3.6.8-alpine
 
 COPY requestments.txt requestments.txt
 
-RUN apk update && apk add tzdata openssl-dev libffi-dev make gcc g++ nginx && \
+RUN apk update && apk add tzdata openssl-dev libffi-dev make gcc g++ nginx mysql-dev&& \
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone && \
     pip install -r requestments.txt && \
