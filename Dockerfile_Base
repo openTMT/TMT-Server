@@ -2,10 +2,9 @@ FROM python:3.6.8-alpine
 
 COPY requestments.txt requestments.txt
 
-RUN apk update && apk add tzdata openssl-dev libffi-dev make gcc g++&& \
+RUN apk update && apk add tzdata openssl-dev libffi-dev make gcc g++ nginx && \
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone && \
-    pip install -r requestments.txt -i http://pypi.douban.com/simple/ --trusted-host pypi.douban.com && \
-    apk add nginx && \
+    pip install -r requestments.txt
     mkdir /run/nginx && \
     touch /run/nginx/nginx.pid
