@@ -3,8 +3,10 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from .serializers import *
 from django.conf import settings
-import os, time
+import os, time, json
 from .models import *
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from django.http import FileResponse
 from django.http import Http404
 from django.utils.http import urlquote
@@ -34,9 +36,11 @@ class FileUploadObject(views.APIView):
         destination.close()
         file_url = f'{settings.DOMAIN}/files/{time.strftime("%Y-%m")}/{file_name}'
 
+        username = request.session['user'].get('username') if request.session.get('user') else request.data.get(
+            'username')
+
         Files.objects.create(
-            username=request.session['user'].get('username') if request.session.get('user') else request.data.get(
-                'username'),
+            username=username,
             file_name=file_name,
             file_size=file_object.size,
             file_type=file_name_suffix,
@@ -44,6 +48,18 @@ class FileUploadObject(views.APIView):
             file_url=file_url,
             device_info=request.data.get('device_info'),
         )
+
+        # 发送消息给人
+        channel_layer = get_channel_layer()
+        to = username
+        async_to_sync(channel_layer.group_send)(to, {
+            "device_info": json.loads(request.data.get('device_info')),
+            "message": {"url": file_url, "type": file_name_suffix, "path": file_path, "name": file_name},
+            "room": f"{to}_android",
+            "to": to,
+            "type": "message"
+        })
+
         return Response(
             {"status": True, "message": "成功",
              "data": {"url": file_url, "type": file_name_suffix, "path": file_path, "name": file_name}})
