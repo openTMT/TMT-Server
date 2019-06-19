@@ -117,6 +117,9 @@ STATIC_URL = '/static/'
 SESSION_COOKIE_NAME = 'TMTServer_session_id'
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 29  # 29天cookie失效，配合禅道的过期时间
 
+SESSION_COOKIE_SAMESITE = None
+
+
 # # 跨域增加忽略
 CORS_ORIGIN_ALLOW_ALL = True
 
